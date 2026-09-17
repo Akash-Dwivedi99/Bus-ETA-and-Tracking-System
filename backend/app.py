@@ -27,7 +27,7 @@ CORS(app)  # allow the dashboard (served from a different origin/port) to call t
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "your_password",
+    "password": "AkashSQL99",
     "database": "bus_tracker",
 }
 
