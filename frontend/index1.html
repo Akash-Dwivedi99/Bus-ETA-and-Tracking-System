@@ -5,155 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bus Tracker — Student Dashboard</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-<style>
-  :root {
-    --bg: #0f172a;
-    --panel: #1e293b;
-    --panel-light: #273449;
-    --accent: #38bdf8;
-    --accent-dark: #0284c7;
-    --text: #e2e8f0;
-    --text-muted: #94a3b8;
-    --success: #4ade80;
-    --border: #334155;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  header {
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  header h1 {
-    font-size: 18px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  header h1 .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--success);
-    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); }
-    70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-  }
-  header .status {
-    font-size: 13px;
-    color: var(--text-muted);
-  }
-  .layout {
-    flex: 1;
-    display: flex;
-    min-height: 0;
-  }
-  #map {
-    flex: 1;
-    background: #0b1120;
-  }
-  aside {
-    width: 320px;
-    background: var(--panel);
-    border-left: 1px solid var(--border);
-    padding: 20px;
-    overflow-y: auto;
-  }
-  select {
-    width: 100%;
-    background: var(--panel-light);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-  .card {
-    background: var(--panel-light);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-  .card .label {
-    font-size: 12px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 6px;
-  }
-  .card .value {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--accent);
-  }
-  .card .sub {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 4px;
-  }
-  h2 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 24px 0 10px;
-  }
-  .stop-list {
-    list-style: none;
-  }
-  .stop-list li {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-  }
-  .stop-list li:last-child { border-bottom: none; }
-  .stop-list .marker {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--border);
-    flex-shrink: 0;
-  }
-  .stop-list li.reached .marker { background: var(--success); }
-  .stop-list li.next .marker { background: var(--accent); }
-  .stop-list .name { flex: 1; }
-  .stop-list .time { color: var(--text-muted); font-size: 12px; }
-  .error-banner {
-    display: none;
-    background: #7f1d1d;
-    color: #fecaca;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    margin-bottom: 16px;
-  }
-  .leaflet-popup-content-wrapper {
-    background: var(--panel-light);
-    color: var(--text);
-  }
-  .leaflet-popup-tip { background: var(--panel-light); }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -168,19 +21,18 @@
     <div class="error-banner" id="error-banner">Unable to reach the server. Retrying…</div>
 
     <select id="bus-select">
-      <option value="bus-1">Bus 1 — Route A</option>
-      <option value="bus-2">Bus 2 — Route B</option>
+      <option value="bus-1">Bus 01 — College Main Route</option>
     </select>
 
-    <div class="card">
+    <div class="eta-hero">
       <div class="label">Estimated arrival</div>
-      <div class="value" id="eta-value">— min</div>
+      <div class="value" id="eta-value">—</div>
       <div class="sub" id="eta-stop-name">Waiting for data</div>
     </div>
 
-    <div class="card">
-      <div class="label">Distance remaining</div>
-      <div class="value" id="distance-value">— km</div>
+    <div class="stat-line">
+      <span class="label">Distance remaining</span>
+      <span class="value" id="distance-value">— km</span>
     </div>
 
     <h2>Route stops</h2>
