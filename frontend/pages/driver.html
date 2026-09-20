@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bus Tracker — Driver</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/driver.css">
+</head>
+<body class="driver-body">
+
+<header class="app-bar" style="width:100%; max-width:440px;">
+  <span class="brand"><span class="dot" id="online-dot" style="background:var(--muted-dim); animation:none;"></span>Driver</span>
+  <span class="meta" id="driver-name">—</span>
+</header>
+
+<main class="driver-main">
+  <div class="error-banner" id="error-banner">Could not reach the server.</div>
+
+  <div class="status-row">
+    <span class="bus-name" id="bus-label">Bus —</span>
+    <span class="pill" id="status-pill">Offline</span>
+  </div>
+
+  <div class="panel trip-control">
+    <div class="ring" id="trip-ring">🚌</div>
+    <div class="state-label" id="state-label">Trip not started</div>
+    <button class="trip-btn start" id="trip-btn">Start Trip</button>
+  </div>
+
+  <div class="panel gps-readout">
+    <div>
+      <div class="coords" id="gps-coords">— , —</div>
+      <div class="caption">Last GPS reading sent</div>
+    </div>
+    <span class="pill" id="gps-pill">GPS off</span>
+  </div>
+
+  <div class="stats-grid">
+    <div class="panel stat-box">
+      <div class="label">Updates sent</div>
+      <div class="value" id="stat-updates">0</div>
+    </div>
+    <div class="panel stat-box">
+      <div class="label">Trip duration</div>
+      <div class="value" id="stat-duration">00:00</div>
+    </div>
+  </div>
+
+  <div class="panel direction-row">
+    <div class="current-route">
+      <span class="label">Current direction</span>
+      <span class="name" id="route-name">—</span>
+    </div>
+    <button class="btn btn-outline" id="switch-direction-btn">⇄ Switch</button>
+  </div>
+</main>
+
+<script src="../js/driver.js"></script>
+</body>
+</html>
