@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bus Tracker — Admin</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+
+<header class="app-bar">
+  <span class="brand"><span class="dot"></span>Admin Panel</span>
+  <span class="meta" id="admin-name">—</span>
+</header>
+
+<div class="admin-layout">
+  <nav class="admin-nav">
+    <button class="active" data-section="routes-section">Routes</button>
+    <button data-section="buses-section">Buses</button>
+    <button data-section="stops-section">Stops</button>
+  </nav>
+
+  <div class="admin-content">
+    <div class="error-banner" id="error-banner">Something went wrong.</div>
+
+    <!-- Routes -->
+    <section class="admin-section active" id="routes-section">
+      <div class="section-header"><h1>Routes</h1></div>
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Paired (return) route</th></tr></thead>
+        <tbody id="routes-table"></tbody>
+      </table>
+      <div class="panel add-form">
+        <h3>Add a new route</h3>
+        <div class="field"><label for="new-route-name">Route name</label><input type="text" id="new-route-name" placeholder="e.g. Hostel Route"></div>
+        <button class="btn btn-primary" id="add-route-btn">Add route</button>
+      </div>
+    </section>
+
+    <!-- Buses -->
+    <section class="admin-section" id="buses-section">
+      <div class="section-header"><h1>Buses</h1></div>
+      <table>
+        <thead><tr><th>Bus ID</th><th>Bus number</th><th>Route</th></tr></thead>
+        <tbody id="buses-table"></tbody>
+      </table>
+      <div class="panel add-form">
+        <h3>Register a new bus</h3>
+        <div class="form-row">
+          <div class="field"><label for="new-bus-id">Bus ID</label><input type="text" id="new-bus-id" placeholder="bus-3"></div>
+          <div class="field"><label for="new-bus-number">Bus number</label><input type="text" id="new-bus-number" placeholder="Bus 03"></div>
+        </div>
+        <div class="field">
+          <label for="new-bus-route">Route</label>
+          <select id="new-bus-route"></select>
+        </div>
+        <button class="btn btn-primary" id="add-bus-btn">Register bus</button>
+      </div>
+    </section>
+
+    <!-- Stops -->
+    <section class="admin-section" id="stops-section">
+      <div class="section-header"><h1>Stops</h1></div>
+      <div class="field" style="max-width:320px;">
+        <label for="stops-route-filter">Viewing stops for route</label>
+        <select id="stops-route-filter"></select>
+      </div>
+      <table>
+        <thead><tr><th>Order</th><th>Name</th><th>Lat</th><th>Lng</th></tr></thead>
+        <tbody id="stops-table"></tbody>
+      </table>
+      <div class="panel add-form">
+        <h3>Add a stop to this route</h3>
+        <div class="field"><label for="new-stop-name">Stop name</label><input type="text" id="new-stop-name" placeholder="e.g. Market Square"></div>
+        <div class="form-row">
+          <div class="field"><label for="new-stop-lat">Latitude</label><input type="text" id="new-stop-lat" placeholder="30.3256"></div>
+          <div class="field"><label for="new-stop-lng">Longitude</label><input type="text" id="new-stop-lng" placeholder="78.0437"></div>
+          <div class="field"><label for="new-stop-order">Order</label><input type="text" id="new-stop-order" placeholder="1"></div>
+        </div>
+        <button class="btn btn-primary" id="add-stop-btn">Add stop</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="../js/admin.js"></script>
+</body>
+</html>
