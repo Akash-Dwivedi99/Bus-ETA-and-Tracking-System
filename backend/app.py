@@ -5,6 +5,7 @@ Endpoints:
   POST /api/update-location   -> driver app pushes live GPS coordinates
   GET  /api/bus-location      -> student dashboard polls current bus + stop + ETA data
   GET  /api/stops             -> list all stops for a route (static reference data)
+  GET  /api/buses             -> list all buses + their route name (populates the dashboard's dropdown dynamically)
 
 Run:
   pip install flask flask-cors mysql-connector-python
@@ -83,35 +84,74 @@ def fetch_route_stops(cursor, bus_id):
     return cursor.fetchall()
 
 
+def fetch_all_buses(cursor):
+    """All buses with their route name — used to build the dashboard's
+    bus/route picker dynamically instead of hardcoding options in HTML."""
+    cursor.execute(
+        """
+        SELECT b.id, b.bus_number, r.name AS route_name
+        FROM buses b
+        JOIN routes r ON r.id = b.route_id
+        ORDER BY b.id
+        """
+    )
+    return cursor.fetchall()
+
+
 def build_stop_payload(stops, bus_lat, bus_lng):
     """
     Walks the ordered stop list and figures out which stops are already
-    reached vs. upcoming, based on proximity to the bus's current position.
-    A stop is considered 'reached' once the bus has passed it in sequence.
+    reached vs. upcoming.
+
+    Anchored on whichever stop is CLOSEST to the bus right now: every
+    earlier stop (by stop_order) is treated as already passed, regardless
+    of how far the bus has since driven from it. This matters because a
+    plain proximity check (distance <= radius) breaks once the bus drives
+    more than the radius away from a stop it already passed — the stop
+    would stop counting as "reached" and get re-picked as "next", with
+    its distance climbing as the bus drives further away.
     """
+    if not stops:
+        return []
+
     REACHED_RADIUS_KM = 0.15  # ~150m counts as "arrived"
+
+    distances = [haversine_km(bus_lat, bus_lng, s["lat"], s["lng"]) for s in stops]
+    closest_idx = min(range(len(stops)), key=lambda i: distances[i])
 
     payload = []
     next_stop_found = False
     cumulative_km_to_next = None
 
     for i, stop in enumerate(stops):
-        dist_to_bus = haversine_km(bus_lat, bus_lng, stop["lat"], stop["lng"])
-        reached = dist_to_bus <= REACHED_RADIUS_KM and not next_stop_found
+        if i < closest_idx:
+            # Earlier than the closest stop in route order — already passed,
+            # no matter how far away the bus has since driven.
+            reached, is_next, eta_min = True, False, None
 
-        is_next = False
-        eta_min = None
-        if not reached and not next_stop_found:
-            is_next = True
-            next_stop_found = True
-            cumulative_km_to_next = dist_to_bus
-            eta_min = round((dist_to_bus / AVG_SPEED_KMPH) * 60, 1)
-        elif next_stop_found and not reached:
-            # rough sequential estimate for stops further down the route
-            prev_stop = stops[i - 1]
-            leg_km = haversine_km(prev_stop["lat"], prev_stop["lng"], stop["lat"], stop["lng"])
-            cumulative_km_to_next += leg_km
-            eta_min = round((cumulative_km_to_next / AVG_SPEED_KMPH) * 60, 1)
+        elif i == closest_idx:
+            reached = distances[i] <= REACHED_RADIUS_KM
+            is_next = not reached
+            eta_min = None
+            if is_next:
+                eta_min = round((distances[i] / AVG_SPEED_KMPH) * 60, 1)
+                cumulative_km_to_next = distances[i]
+                next_stop_found = True
+
+        else:
+            reached = False
+            if not next_stop_found:
+                is_next = True
+                next_stop_found = True
+                cumulative_km_to_next = distances[i]
+                eta_min = round((distances[i] / AVG_SPEED_KMPH) * 60, 1)
+            else:
+                # rough sequential estimate for stops further down the route
+                is_next = False
+                prev_stop = stops[i - 1]
+                leg_km = haversine_km(prev_stop["lat"], prev_stop["lng"], stop["lat"], stop["lng"])
+                cumulative_km_to_next += leg_km
+                eta_min = round((cumulative_km_to_next / AVG_SPEED_KMPH) * 60, 1)
 
         payload.append(
             {
@@ -193,6 +233,21 @@ def bus_location():
             "last_updated": latest["recorded_at"].isoformat(),
         }
     )
+
+
+@app.route("/api/buses", methods=["GET"])
+def buses():
+    """List every bus + its route name, so the dashboard's dropdown
+    can build itself from the database instead of being hardcoded."""
+    conn = get_conn()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        data = fetch_all_buses(cursor)
+        cursor.close()
+    finally:
+        conn.close()
+
+    return jsonify(data)
 
 
 @app.route("/api/stops", methods=["GET"])

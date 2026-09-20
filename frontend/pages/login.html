@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — Campus Transit</title>
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/login.css">
+</head>
+<body class="login-body">
+
+<div class="panel auth-card">
+  <div class="brand"><span class="dot"></span>Campus Transit</div>
+
+  <h1 id="form-title">Continue as Student</h1>
+  <p class="sub" id="form-sub">Track your bus in real time.</p>
+
+  <div class="role-tabs">
+    <button class="active" data-role="student">Student</button>
+    <button data-role="driver">Driver</button>
+    <button data-role="admin">Admin</button>
+  </div>
+
+  <div class="error-banner" id="error-banner">Please enter a name to continue.</div>
+
+  <form id="login-form">
+    <div class="field">
+      <label for="name">Name</label>
+      <input type="text" id="name" placeholder="e.g. Akash Sharma" autocomplete="name">
+    </div>
+    <div class="field" id="bus-field" style="display:none;">
+      <label for="assigned-bus">Assigned bus</label>
+      <select id="assigned-bus">
+        <option value="bus-1">Bus 01</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg">Continue</button>
+  </form>
+
+  <div class="fine-print">Demo login — no password required yet. Swap this for real authentication before going live.</div>
+</div>
+
+<script src="../js/login.js"></script>
+</body>
+</html>

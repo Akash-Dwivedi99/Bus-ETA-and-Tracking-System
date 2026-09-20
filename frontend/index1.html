@@ -3,140 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bus Tracker — Student Dashboard</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="styles.css">
+<title>Campus Transit</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 30% 20%, rgba(255,176,32,0.08), transparent 55%), var(--ink);
+  }
+  .hero {
+    text-align: left;
+    max-width: 420px;
+    padding: 32px;
+  }
+  .hero .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--signal);
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 30px;
+  }
+</style>
 </head>
 <body>
 
-<header>
-  <h1><span class="dot"></span>Campus Bus Tracker</h1>
-  <span class="status" id="last-updated">Connecting…</span>
-</header>
-
-<div class="layout">
-  <div id="map"></div>
-  <aside>
-    <div class="error-banner" id="error-banner">Unable to reach the server. Retrying…</div>
-
-    <select id="bus-select">
-      <option value="bus-1">Bus 01 — College Main Route</option>
-    </select>
-
-    <div class="eta-hero">
-      <div class="label">Estimated arrival</div>
-      <div class="value" id="eta-value">—</div>
-      <div class="sub" id="eta-stop-name">Waiting for data</div>
-    </div>
-
-    <div class="stat-line">
-      <span class="label">Distance remaining</span>
-      <span class="value" id="distance-value">— km</span>
-    </div>
-
-    <h2>Route stops</h2>
-    <ul class="stop-list" id="stop-list">
-      <li><span class="marker"></span><span class="name">Loading stops…</span></li>
-    </ul>
-  </aside>
+<div class="hero">
+  <div class="kicker mono">campus transit · live tracking</div>
+  <h1>Know exactly when<br>your bus arrives.</h1>
+  <p>Live GPS tracking for college and school buses — see the bus move in real time, get an ETA, and know how far it is from you.</p>
+  <a href="pages/login.html" class="btn btn-primary btn-lg">Get started</a>
 </div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-<script>
-  // ---- Configuration ----
-  // Point this at your Flask backend, e.g. "http://localhost:5000/api"
-  const API_BASE = "http://localhost:5000/api";
-  const POLL_INTERVAL_MS = 5000;
-
-  // ---- Map setup ----
-  const map = L.map('map', { zoomControl: true }).setView([30.3165, 78.0322], 14); // default: Dehradun area, adjust to campus
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors',
-    maxZoom: 19
-  }).addTo(map);
-
-  const busIcon = L.divIcon({
-    className: '',
-    html: '<div style="background:#38bdf8;width:16px;height:16px;border-radius:50%;border:3px solid #0f172a;box-shadow:0 0 0 2px #38bdf8;"></div>',
-    iconSize: [16, 16],
-    iconAnchor: [8, 8]
-  });
-
-  let busMarker = null;
-  const stopMarkers = [];
-
-  function renderStops(stops) {
-    // Clear old stop markers
-    stopMarkers.forEach(m => map.removeLayer(m));
-    stopMarkers.length = 0;
-
-    const listEl = document.getElementById('stop-list');
-    listEl.innerHTML = '';
-
-    stops.forEach(stop => {
-      const marker = L.circleMarker([stop.lat, stop.lng], {
-        radius: 6,
-        color: stop.reached ? '#4ade80' : '#334155',
-        fillColor: stop.reached ? '#4ade80' : '#1e293b',
-        fillOpacity: 1,
-        weight: 2
-      }).addTo(map).bindPopup(stop.name);
-      stopMarkers.push(marker);
-
-      const li = document.createElement('li');
-      let cls = '';
-      if (stop.reached) cls = 'reached';
-      else if (stop.next) cls = 'next';
-      li.className = cls;
-      li.innerHTML = `<span class="marker"></span><span class="name">${stop.name}</span><span class="time">${stop.eta_min != null ? stop.eta_min + ' min' : ''}</span>`;
-      listEl.appendChild(li);
-    });
-  }
-
-  function renderBus(bus) {
-    const latlng = [bus.lat, bus.lng];
-    if (!busMarker) {
-      busMarker = L.marker(latlng, { icon: busIcon }).addTo(map).bindPopup('Bus location');
-    } else {
-      busMarker.setLatLng(latlng);
-    }
-  }
-
-  function updateSidebar(data) {
-    document.getElementById('eta-value').textContent = data.eta_min != null ? `${data.eta_min} min` : '— min';
-    document.getElementById('eta-stop-name').textContent = data.next_stop_name ? `to ${data.next_stop_name}` : 'Waiting for data';
-    document.getElementById('distance-value').textContent = data.distance_km != null ? `${data.distance_km} km` : '— km';
-    document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
-  }
-
-  function showError(show) {
-    document.getElementById('error-banner').style.display = show ? 'block' : 'none';
-  }
-
-  async function fetchBusData() {
-    const busId = document.getElementById('bus-select').value;
-    try {
-      const res = await fetch(`${API_BASE}/bus-location?bus_id=${encodeURIComponent(busId)}`);
-      if (!res.ok) throw new Error('Bad response');
-      const data = await res.json();
-
-      renderBus(data.bus);
-      renderStops(data.stops || []);
-      updateSidebar(data);
-      showError(false);
-    } catch (err) {
-      showError(true);
-      document.getElementById('last-updated').textContent = 'Connection lost';
-    }
-  }
-
-  document.getElementById('bus-select').addEventListener('change', fetchBusData);
-
-  fetchBusData();
-  setInterval(fetchBusData, POLL_INTERVAL_MS);
-</script>
 
 </body>
 </html>
