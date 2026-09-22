@@ -1,0 +1,101 @@
+body.driver-body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.driver-main {
+  flex: 1;
+  width: 100%;
+  max-width: 440px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.status-row .bus-name { font-size: 15px; font-weight: 600; }
+
+/* The big trip control — this is the single most important control
+   on the page, like Uber's "Go Online" button */
+.trip-control {
+  padding: 32px 24px;
+  text-align: center;
+}
+.trip-control .ring {
+  width: 120px; height: 120px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  border: 3px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.trip-control .ring.active {
+  border-color: var(--reached);
+  box-shadow: 0 0 0 6px rgba(79, 209, 197, 0.12);
+}
+.trip-control .state-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.trip-control .state-label.active { color: var(--reached); }
+
+.trip-btn {
+  width: 100%;
+  padding: 18px;
+  border-radius: var(--radius-pill);
+  border: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.08s ease;
+}
+.trip-btn:active { transform: scale(0.98); }
+.trip-btn.start { background: var(--signal); color: var(--signal-ink); }
+.trip-btn.stop { background: var(--danger-bg); color: var(--danger); border: 1px solid #47201f; }
+
+/* Live GPS readout */
+.gps-readout {
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.gps-readout .coords {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--paper);
+}
+.gps-readout .caption { font-size: 11px; color: var(--muted-dim); margin-top: 2px; }
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.stat-box {
+  padding: 16px;
+}
+.stat-box .label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.stat-box .value { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 600; }
+
+/* Direction switch */
+.direction-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+}
+.direction-row .current-route { font-size: 13px; }
+.direction-row .current-route .name { font-weight: 600; }
+.direction-row .current-route .label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 2px; }

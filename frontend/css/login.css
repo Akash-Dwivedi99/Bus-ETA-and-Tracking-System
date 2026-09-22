@@ -1,0 +1,72 @@
+body.login-body {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 32px;
+}
+
+.auth-card .brand {
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  color: var(--muted);
+}
+.auth-card .brand .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--reached);
+}
+
+.auth-card h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.auth-card .sub {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+/* Role selector — three pill tabs */
+.role-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+}
+.role-tabs button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.role-tabs button.active {
+  background: var(--signal);
+  color: var(--signal-ink);
+}
+
+.auth-card .fine-print {
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--muted-dim);
+  text-align: center;
+}

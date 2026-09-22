@@ -2,10 +2,16 @@
 Bus Tracking System — Flask Backend
 ------------------------------------
 Endpoints:
-  POST /api/update-location   -> driver app pushes live GPS coordinates
-  GET  /api/bus-location      -> student dashboard polls current bus + stop + ETA data
-  GET  /api/stops             -> list all stops for a route (static reference data)
-  GET  /api/buses             -> list all buses + their route name (populates the dashboard's dropdown dynamically)
+  POST /api/update-location            -> driver app pushes live GPS coordinates
+  GET  /api/bus-location                -> student dashboard polls current bus + stop + ETA data
+  GET  /api/stops                       -> list all stops for a bus's route
+  POST /api/stops                       -> admin: add a stop to a route
+  GET  /api/buses                       -> list all buses + their route name
+  POST /api/buses                       -> admin: register a new bus
+  GET  /api/routes                      -> list all routes
+  POST /api/routes                      -> admin: create a new route
+  GET  /api/routes/<id>/stops           -> all stops for a route, by route_id directly
+  POST /api/buses/<id>/toggle-direction -> driver: flip a bus to its route's return direction
 
 Run:
   pip install flask flask-cors mysql-connector-python
@@ -14,32 +20,28 @@ Run:
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import mysql.connector
-from mysql.connector import pooling
 from math import radians, sin, cos, sqrt, atan2
 from datetime import datetime
 
+from config import AVG_SPEED_KMPH, REACHED_RADIUS_KM, DEBUG, PORT
+from database.db import (
+    get_conn,
+    fetch_latest_location,
+    fetch_route_stops,
+    fetch_stops_by_route,
+    fetch_all_buses,
+    fetch_all_routes,
+    insert_bus_location,
+    insert_route,
+    insert_bus,
+    insert_stop,
+    fetch_bus_route_id,
+    fetch_paired_route_id,
+    update_bus_route,
+)
+
 app = Flask(__name__)
 CORS(app)  # allow the dashboard (served from a different origin/port) to call this API
-
-# ---------------------------------------------------------------------------
-# Database configuration
-# ---------------------------------------------------------------------------
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "AkashSQL99",
-    "database": "bus_tracker",
-}
-
-pool = pooling.MySQLConnectionPool(pool_name="bus_pool", pool_size=5, **DB_CONFIG)
-
-# Average bus speed used for ETA estimation when no historical speed data exists yet.
-AVG_SPEED_KMPH = 25
-
-
-def get_conn():
-    return pool.get_connection()
 
 
 # ---------------------------------------------------------------------------
@@ -53,49 +55,6 @@ def haversine_km(lat1, lng1, lat2, lng2):
     dlambda = radians(lng2 - lng1)
     a = sin(dphi / 2) ** 2 + cos(phi1) * cos(phi2) * sin(dlambda / 2) ** 2
     return R * 2 * atan2(sqrt(a), sqrt(1 - a))
-
-
-def fetch_latest_location(cursor, bus_id):
-    cursor.execute(
-        """
-        SELECT lat, lng, recorded_at
-        FROM bus_locations
-        WHERE bus_id = %s
-        ORDER BY recorded_at DESC
-        LIMIT 1
-        """,
-        (bus_id,),
-    )
-    return cursor.fetchone()
-
-
-def fetch_route_stops(cursor, bus_id):
-    cursor.execute(
-        """
-        SELECT s.id, s.name, s.lat, s.lng, s.stop_order
-        FROM stops s
-        JOIN routes r ON r.id = s.route_id
-        JOIN buses b ON b.route_id = r.id
-        WHERE b.id = %s
-        ORDER BY s.stop_order ASC
-        """,
-        (bus_id,),
-    )
-    return cursor.fetchall()
-
-
-def fetch_all_buses(cursor):
-    """All buses with their route name — used to build the dashboard's
-    bus/route picker dynamically instead of hardcoding options in HTML."""
-    cursor.execute(
-        """
-        SELECT b.id, b.bus_number, r.name AS route_name
-        FROM buses b
-        JOIN routes r ON r.id = b.route_id
-        ORDER BY b.id
-        """
-    )
-    return cursor.fetchall()
 
 
 def build_stop_payload(stops, bus_lat, bus_lng):
@@ -114,8 +73,6 @@ def build_stop_payload(stops, bus_lat, bus_lng):
     if not stops:
         return []
 
-    REACHED_RADIUS_KM = 0.15  # ~150m counts as "arrived"
-
     distances = [haversine_km(bus_lat, bus_lng, s["lat"], s["lng"]) for s in stops]
     closest_idx = min(range(len(stops)), key=lambda i: distances[i])
 
@@ -125,8 +82,6 @@ def build_stop_payload(stops, bus_lat, bus_lng):
 
     for i, stop in enumerate(stops):
         if i < closest_idx:
-            # Earlier than the closest stop in route order — already passed,
-            # no matter how far away the bus has since driven.
             reached, is_next, eta_min = True, False, None
 
         elif i == closest_idx:
@@ -146,7 +101,6 @@ def build_stop_payload(stops, bus_lat, bus_lng):
                 cumulative_km_to_next = distances[i]
                 eta_min = round((distances[i] / AVG_SPEED_KMPH) * 60, 1)
             else:
-                # rough sequential estimate for stops further down the route
                 is_next = False
                 prev_stop = stops[i - 1]
                 leg_km = haversine_km(prev_stop["lat"], prev_stop["lng"], stop["lat"], stop["lng"])
@@ -184,10 +138,7 @@ def update_location():
     conn = get_conn()
     try:
         cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO bus_locations (bus_id, lat, lng, recorded_at) VALUES (%s, %s, %s, %s)",
-            (bus_id, lat, lng, datetime.utcnow()),
-        )
+        insert_bus_location(cursor, bus_id, lat, lng, datetime.utcnow())
         conn.commit()
         cursor.close()
     finally:
@@ -250,6 +201,73 @@ def buses():
     return jsonify(data)
 
 
+@app.route("/api/buses", methods=["POST"])
+def create_bus():
+    """Admin panel: register a new bus against an existing route."""
+    data = request.get_json(silent=True) or {}
+    bus_id = data.get("id")
+    bus_number = data.get("bus_number")
+    route_id = data.get("route_id")
+
+    if not bus_id or not bus_number or not route_id:
+        return jsonify({"error": "id, bus_number and route_id are required"}), 400
+
+    conn = get_conn()
+    try:
+        cursor = conn.cursor()
+        insert_bus(cursor, bus_id, bus_number, route_id)
+        conn.commit()
+        cursor.close()
+    finally:
+        conn.close()
+    return jsonify({"id": bus_id, "bus_number": bus_number, "route_id": route_id}), 201
+
+
+@app.route("/api/routes", methods=["GET"])
+def routes():
+    """List every route — used by the admin panel and driver.html."""
+    conn = get_conn()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        data = fetch_all_routes(cursor)
+        cursor.close()
+    finally:
+        conn.close()
+    return jsonify(data)
+
+
+@app.route("/api/routes", methods=["POST"])
+def create_route():
+    """Admin panel: create a new route."""
+    data = request.get_json(silent=True) or {}
+    name = data.get("name")
+    if not name:
+        return jsonify({"error": "name is required"}), 400
+
+    conn = get_conn()
+    try:
+        cursor = conn.cursor()
+        new_id = insert_route(cursor, name)
+        conn.commit()
+        cursor.close()
+    finally:
+        conn.close()
+    return jsonify({"id": new_id, "name": name}), 201
+
+
+@app.route("/api/routes/<int:route_id>/stops", methods=["GET"])
+def route_stops(route_id):
+    """All stops for a route, directly by route_id — used by the admin panel."""
+    conn = get_conn()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        data = fetch_stops_by_route(cursor, route_id)
+        cursor.close()
+    finally:
+        conn.close()
+    return jsonify(data)
+
+
 @app.route("/api/stops", methods=["GET"])
 def stops():
     """Static reference data: full stop list for a given bus's route."""
@@ -266,5 +284,58 @@ def stops():
     return jsonify(data)
 
 
+@app.route("/api/stops", methods=["POST"])
+def create_stop():
+    """Admin panel: add a stop to a route."""
+    data = request.get_json(silent=True) or {}
+    route_id = data.get("route_id")
+    name = data.get("name")
+    lat = data.get("lat")
+    lng = data.get("lng")
+    stop_order = data.get("stop_order")
+
+    if None in (route_id, name, lat, lng, stop_order):
+        return jsonify({"error": "route_id, name, lat, lng and stop_order are required"}), 400
+
+    conn = get_conn()
+    try:
+        cursor = conn.cursor()
+        new_id = insert_stop(cursor, route_id, name, lat, lng, stop_order)
+        conn.commit()
+        cursor.close()
+    finally:
+        conn.close()
+    return jsonify({"id": new_id, "route_id": route_id, "name": name}), 201
+
+
+@app.route("/api/buses/<bus_id>/toggle-direction", methods=["POST"])
+def toggle_direction(bus_id):
+    """Driver page: flip a bus between a route's forward and return direction."""
+    conn = get_conn()
+    try:
+        cursor = conn.cursor(dictionary=True)
+
+        bus_row = fetch_bus_route_id(cursor, bus_id)
+        if not bus_row:
+            return jsonify({"error": "bus not found"}), 404
+
+        route_row = fetch_paired_route_id(cursor, bus_row["route_id"])
+        paired_id = route_row["paired_route_id"] if route_row else None
+
+        if not paired_id:
+            return jsonify({
+                "error": "This route has no return-direction route configured. "
+                         "Check database/schema.sql has run fully."
+            }), 400
+
+        update_bus_route(cursor, bus_id, paired_id)
+        conn.commit()
+        cursor.close()
+    finally:
+        conn.close()
+
+    return jsonify({"status": "ok", "bus_id": bus_id, "new_route_id": paired_id})
+
+
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=DEBUG, port=PORT)

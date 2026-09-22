@@ -12,7 +12,7 @@ import time
 import requests
 
 API_URL = "http://localhost:5000/api/update-location"
-BUS_ID = "bus-2"
+BUS_ID = "bus-1"
 
 # A simple straight-line path between two points on your route.
 # Replace these with real coordinates from your `stops` table.
