@@ -43,7 +43,7 @@ body.login-body {
   gap: 8px;
   margin-bottom: 24px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   padding: 4px;
 }
 .role-tabs button {
@@ -55,7 +55,7 @@ body.login-body {
   font-size: 13px;
   font-weight: 500;
   padding: 9px 0;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
 }

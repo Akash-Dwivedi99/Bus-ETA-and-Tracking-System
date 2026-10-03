@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bus Tracker — Driver</title>
+<title>Bus Tracker: Driver</title>
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../css/driver.css">
 </head>
@@ -11,26 +11,33 @@
 
 <header class="app-bar" style="width:100%; max-width:440px;">
   <span class="brand"><span class="dot" id="online-dot" style="background:var(--muted-dim); animation:none;"></span>Driver</span>
-  <span class="meta" id="driver-name">—</span>
+  <span class="meta" id="driver-name">--</span>
 </header>
 
 <main class="driver-main">
   <div class="error-banner" id="error-banner">Could not reach the server.</div>
 
   <div class="status-row">
-    <span class="bus-name" id="bus-label">Bus —</span>
+    <span class="bus-name" id="bus-label">Bus --</span>
     <span class="pill" id="status-pill">Offline</span>
   </div>
 
   <div class="panel trip-control">
-    <div class="ring" id="trip-ring">🚌</div>
+    <div class="ring" id="trip-ring">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="18" height="12" rx="2"></rect>
+        <path d="M3 11h18"></path>
+        <circle cx="7.5" cy="19" r="1.5"></circle>
+        <circle cx="16.5" cy="19" r="1.5"></circle>
+      </svg>
+    </div>
     <div class="state-label" id="state-label">Trip not started</div>
     <button class="trip-btn start" id="trip-btn">Start Trip</button>
   </div>
 
   <div class="panel gps-readout">
     <div>
-      <div class="coords" id="gps-coords">— , —</div>
+      <div class="coords" id="gps-coords">--, --</div>
       <div class="caption">Last GPS reading sent</div>
     </div>
     <span class="pill" id="gps-pill">GPS off</span>
@@ -50,9 +57,17 @@
   <div class="panel direction-row">
     <div class="current-route">
       <span class="label">Current direction</span>
-      <span class="name" id="route-name">—</span>
+      <span class="name" id="route-name">--</span>
     </div>
-    <button class="btn btn-outline" id="switch-direction-btn">⇄ Switch</button>
+    <button class="btn btn-outline" id="switch-direction-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="17 1 21 5 17 9"></polyline>
+        <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+        <polyline points="7 23 3 19 7 15"></polyline>
+        <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+      </svg>
+      Switch
+    </button>
   </div>
 </main>
 

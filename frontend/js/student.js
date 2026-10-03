@@ -20,7 +20,7 @@ let routeLine = null;
 function updateStudentDistance() {
   const el = document.getElementById('student-distance-value');
   if (!lastBusLatLng || !lastStudentLatLng) {
-    el.textContent = '— km';
+    el.textContent = '-- km';
     return;
   }
   const km = haversineKm(
@@ -87,9 +87,9 @@ function renderBus(bus) {
 }
 
 function updateSidebar(data) {
-  document.getElementById('eta-value').textContent = data.eta_min != null ? `${data.eta_min} min` : '— min';
+  document.getElementById('eta-value').textContent = data.eta_min != null ? `${data.eta_min} min` : '-- min';
   document.getElementById('eta-stop-name').textContent = data.next_stop_name ? `to ${data.next_stop_name}` : 'Waiting for data';
-  document.getElementById('distance-value').textContent = data.distance_km != null ? `${data.distance_km} km` : '— km';
+  document.getElementById('distance-value').textContent = data.distance_km != null ? `${data.distance_km} km` : '-- km';
   document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
 }
 
@@ -126,7 +126,7 @@ async function loadBuses() {
     buses.forEach(bus => {
       const opt = document.createElement('option');
       opt.value = bus.id;
-      opt.textContent = `${bus.bus_number} — ${bus.route_name}`;
+      opt.textContent = `${bus.bus_number}: ${bus.route_name}`;
       select.appendChild(opt);
     });
   } catch (err) {

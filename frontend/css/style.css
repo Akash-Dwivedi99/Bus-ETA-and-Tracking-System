@@ -155,7 +155,7 @@ a { color: inherit; text-decoration: none; }
 .btn-lg {
   padding: 16px 28px;
   font-size: 15px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   width: 100%;
 }
 

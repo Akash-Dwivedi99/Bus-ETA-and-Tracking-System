@@ -30,7 +30,7 @@ async function loadRoutes() {
       <tr>
         <td class="mono-cell">${r.id}</td>
         <td>${r.name}</td>
-        <td class="mono-cell">${r.paired_route_id ?? '—'}</td>
+        <td class="mono-cell">${r.paired_route_id ?? '--'}</td>
       </tr>
     `).join('');
 
@@ -88,7 +88,7 @@ document.getElementById('add-bus-btn').addEventListener('click', async () => {
     showError(false);
     await loadBuses();
   } catch {
-    showError(true, 'Could not register bus — check the Bus ID is unique.');
+    showError(true, 'Could not register bus. Check the Bus ID is unique.');
   }
 });
 

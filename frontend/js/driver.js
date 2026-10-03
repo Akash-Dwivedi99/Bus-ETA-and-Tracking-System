@@ -67,7 +67,7 @@ async function sendLocation() {
     gpsPill.classList.add('on');
     showError(false);
   } catch {
-    showError(true, 'Could not reach the server — updates are not being sent.');
+    showError(true, 'Could not reach the server. Updates are not being sent.');
   }
 }
 
@@ -93,7 +93,7 @@ function startTrip() {
 
   watchId = navigator.geolocation.watchPosition(
     (position) => { latestPosition = position; },
-    () => { showError(true, 'Location permission denied — cannot share GPS.'); },
+    () => { showError(true, 'Location permission denied. Cannot share GPS.'); },
     { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
   );
 

@@ -24,11 +24,17 @@ const busIcon = L.divIcon({
            border:3px solid #0b1220;
            border-radius:50%;
            display:flex; align-items:center; justify-content:center;
-           font-size:16px;
            box-shadow:0 2px 8px rgba(0,0,0,0.5);
            position:relative;
            z-index:2;
-         ">🚌</div>`,
+         ">
+           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b1220" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+             <rect x="3" y="5" width="18" height="12" rx="2"></rect>
+             <path d="M3 11h18"></path>
+             <circle cx="7.5" cy="19" r="1.5"></circle>
+             <circle cx="16.5" cy="19" r="1.5"></circle>
+           </svg>
+         </div>`,
   iconSize: [34, 34],
   iconAnchor: [17, 17],
 });

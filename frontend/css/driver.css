@@ -34,9 +34,10 @@ body.driver-body {
   border-radius: 50%;
   border: 3px solid var(--line);
   display: flex; align-items: center; justify-content: center;
-  font-size: 40px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  color: var(--muted);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
 }
+.trip-control .ring.active { color: var(--reached); }
 .trip-control .ring.active {
   border-color: var(--reached);
   box-shadow: 0 0 0 6px rgba(79, 209, 197, 0.12);
@@ -51,7 +52,7 @@ body.driver-body {
 .trip-btn {
   width: 100%;
   padding: 18px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   border: none;
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
