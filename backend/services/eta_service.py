@@ -6,9 +6,9 @@ This is the layer that ties algorithms/eta.py's pure math to real data
 from the database.
 """
 
-from database.db import get_conn, fetch_route_stops
-from algorithms.eta import haversine_km, build_stop_payload
-from services.location_service import get_latest_location
+from backend.database.db import get_conn, fetch_route_stops
+from backend.algorithms.eta import haversine_km, build_stop_payload
+from backend.services.location_service import get_latest_location
 
 
 def get_tracking_data(bus_id):
@@ -50,7 +50,7 @@ def get_all_bus_positions():
     (e.g. an admin map showing every bus at once) rather than per-bus
     ETA tracking.
     """
-    from database.db import fetch_all_buses
+    from backend.database.db import fetch_all_buses
 
     conn = get_conn()
     try:

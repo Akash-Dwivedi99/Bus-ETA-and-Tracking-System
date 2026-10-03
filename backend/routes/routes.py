@@ -5,9 +5,9 @@ panel and the Dijkstra/graph endpoints.
 """
 
 from flask import Blueprint, request, jsonify
-from services.trip_service import list_routes, create_route, list_stops_for_route, add_stop
-from database.db import get_conn, fetch_route_stops
-from algorithms.graph import RouteGraph
+from backend.services.trip_service import list_routes, create_route, list_stops_for_route, add_stop
+from backend.database.db import get_conn, fetch_route_stops
+from backend.algorithms.graph import RouteGraph
 
 routes_bp = Blueprint("routes", __name__)
 

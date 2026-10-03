@@ -5,8 +5,8 @@ consecutive stops. Built fresh from the `stops` table so it always
 reflects whatever is currently in the database.
 """
 
-from algorithms.dijkstra import dijkstra, shortest_path as _shortest_path
-from algorithms.eta import haversine_km
+from backend.algorithms.dijkstra import dijkstra, shortest_path as _shortest_path
+from backend.algorithms.eta import haversine_km
 
 
 class RouteGraph:

@@ -7,7 +7,7 @@ database/db.py both read from this file instead of hardcoding values.
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "AkashSQL99",   # <-- replace with your actual MySQL password
+    "password": "AkashSQL99",   
     "database": "bus_tracker",
 }
 

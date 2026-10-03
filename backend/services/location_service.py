@@ -5,7 +5,7 @@ opens a MySQL connection directly.
 """
 
 from datetime import datetime
-from database.db import get_conn, insert_bus_location, fetch_latest_location
+from backend.database.db import get_conn, insert_bus_location, fetch_latest_location
 
 
 def record_location(bus_id, lat, lng):

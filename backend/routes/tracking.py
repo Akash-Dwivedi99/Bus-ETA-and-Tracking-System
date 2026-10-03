@@ -5,7 +5,7 @@ frontend yet; scaffolded for a future "all buses at once" admin map.
 """
 
 from flask import Blueprint, jsonify
-from services.eta_service import get_all_bus_positions
+from backend.services.eta_service import get_all_bus_positions
 
 tracking_bp = Blueprint("tracking", __name__)
 

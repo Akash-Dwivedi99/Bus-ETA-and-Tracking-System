@@ -5,7 +5,7 @@ on their own.
 """
 
 from math import radians, sin, cos, sqrt, atan2
-from config import AVG_SPEED_KMPH, REACHED_RADIUS_KM
+from backend.config import AVG_SPEED_KMPH, REACHED_RADIUS_KM
 
 
 def haversine_km(lat1, lng1, lat2, lng2):

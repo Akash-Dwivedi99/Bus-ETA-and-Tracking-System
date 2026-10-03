@@ -6,7 +6,7 @@ place and testable on its own.
 """
 
 from mysql.connector import pooling
-from config import DB_CONFIG
+from backend.config import DB_CONFIG
 
 pool = pooling.MySQLConnectionPool(pool_name="bus_pool", pool_size=5, **DB_CONFIG)
 

@@ -3,7 +3,7 @@ Student blueprint — the endpoint the student dashboard actually polls.
 """
 
 from flask import Blueprint, request, jsonify
-from services.eta_service import get_tracking_data
+from backend.services.eta_service import get_tracking_data
 
 student_bp = Blueprint("student", __name__)
 

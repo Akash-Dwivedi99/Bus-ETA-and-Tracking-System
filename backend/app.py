@@ -13,7 +13,7 @@ Run:
 from flask import Flask
 from flask_cors import CORS
 
-from config import DEBUG, PORT
+from backend.config import DEBUG, PORT
 from backend.routes.auth import auth_bp
 from backend.routes.student import student_bp
 from backend.routes.driver import driver_bp

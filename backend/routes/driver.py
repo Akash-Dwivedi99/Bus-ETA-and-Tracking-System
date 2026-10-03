@@ -4,8 +4,8 @@ Driver blueprint — everything the driver page's "Start Trip" and
 """
 
 from flask import Blueprint, request, jsonify
-from services.location_service import record_location
-from services.trip_service import toggle_direction
+from backend.services.location_service import record_location
+from backend.services.trip_service import toggle_direction
 
 driver_bp = Blueprint("driver", __name__)
 

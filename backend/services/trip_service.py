@@ -4,7 +4,7 @@ Used by routes/buses.py, routes/routes.py (the route-resource blueprint),
 and routes/driver.py.
 """
 
-from database.db import (
+from backend.database.db import (
     get_conn,
     fetch_all_buses,
     fetch_all_routes,

@@ -4,7 +4,7 @@ register new ones (admin panel).
 """
 
 from flask import Blueprint, request, jsonify
-from services.trip_service import list_buses, register_bus
+from backend.services.trip_service import list_buses, register_bus
 
 buses_bp = Blueprint("buses", __name__)
 
