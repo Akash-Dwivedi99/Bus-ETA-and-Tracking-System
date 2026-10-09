@@ -1,0 +1,117 @@
+/* Restrained clay surfaces: solid colors, shallow radii, soft raised and inset edges. */
+:root {
+  --radius-sm: 5px;
+  --radius-md: 9px;
+  --radius-lg: 14px;
+  --shadow-card: 8px 8px 18px rgba(0, 0, 0, .28), -6px -6px 14px rgba(38, 53, 62, .26);
+  --clay-inset: inset 1px 1px 0 rgba(255, 255, 255, .045), inset -1px -1px 0 rgba(0, 0, 0, .16);
+  --clay-control: inset 3px 3px 7px rgba(0, 0, 0, .25), inset -1px -1px 3px rgba(255, 255, 255, .025);
+}
+
+.panel,
+.auth-layout,
+.route-art,
+.auth-card,
+.legal-content,
+.landing-info article,
+.table-shell,
+.add-form,
+.eta-hero,
+.distance-card,
+.trip-control,
+.gps-readout,
+.trip-stats,
+.direction-row {
+  box-shadow: var(--shadow-card), var(--clay-inset);
+}
+
+.auth-layout,
+.route-art,
+.legal-content,
+.landing-info article {
+  border: 1px solid var(--line);
+}
+
+.btn,
+.trip-btn,
+.signout,
+.status-tag,
+.live-indicator,
+.nav-icon {
+  box-shadow: 3px 3px 7px rgba(0, 0, 0, .23), inset 1px 1px 0 rgba(255, 255, 255, .12), inset -1px -1px 0 rgba(0, 0, 0, .12);
+}
+
+.btn-primary,
+.trip-btn {
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.btn:active,
+.trip-btn:active,
+.role-tabs button.active,
+.admin-nav button.active {
+  box-shadow: var(--clay-control);
+}
+
+.field input,
+.field select,
+select.control,
+.role-tabs,
+.data-table th {
+  box-shadow: var(--clay-control);
+}
+
+.field input:focus,
+.field select:focus,
+select.control:focus {
+  box-shadow: var(--clay-control), 0 0 0 3px rgba(230, 174, 88, .13);
+}
+
+.app-bar,
+.admin-nav,
+.student-panel {
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, .025), 5px 0 18px rgba(0, 0, 0, .12);
+}
+
+.landing-info article {
+  padding: 20px;
+  background: var(--panel);
+}
+
+.legal-content {
+  padding: 34px clamp(22px, 5vw, 42px) 42px;
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+}
+
+.route-art,
+.panel,
+.auth-card,
+.landing-info article,
+.legal-content,
+.table-shell {
+  transition: box-shadow .18s ease, border-color .18s ease;
+}
+
+@media (hover: hover) {
+  .panel:hover,
+  .route-art:hover,
+  .landing-info article:hover {
+    border-color: #354650;
+    box-shadow: 10px 10px 22px rgba(0, 0, 0, .3), -7px -7px 16px rgba(38, 53, 62, .28), var(--clay-inset);
+  }
+}
+
+@media (max-width: 560px) {
+  .legal-content { padding: 26px 20px 32px; }
+  .landing-info article { padding: 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-art,
+  .panel,
+  .auth-card,
+  .landing-info article,
+  .legal-content,
+  .table-shell { transition: none; }
+}

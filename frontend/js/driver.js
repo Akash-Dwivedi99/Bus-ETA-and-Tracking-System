@@ -31,6 +31,7 @@ let latestPosition = null;
 let updateCount = 0;
 let tripStartTime = null;
 let durationTimer = null;
+let initialPingSent = false;
 
 function showError(show, message) {
   errorBanner.style.display = show ? 'block' : 'none';
@@ -79,6 +80,10 @@ function startTrip() {
 
   tripActive = true;
   tripStartTime = Date.now();
+  updateCount = 0;
+  initialPingSent = false;
+  statUpdates.textContent = '0';
+  statDuration.textContent = '00:00';
 
   tripBtn.textContent = 'End Trip';
   tripBtn.classList.remove('start');
@@ -89,11 +94,20 @@ function startTrip() {
   statusPill.textContent = 'Online';
   statusPill.classList.add('on');
   onlineDot.style.background = 'var(--reached)';
-  onlineDot.style.animation = 'pulse 2.2s infinite';
+  onlineDot.classList.add('is-live');
 
   watchId = navigator.geolocation.watchPosition(
-    (position) => { latestPosition = position; },
-    () => { showError(true, 'Location permission denied. Cannot share GPS.'); },
+    (position) => {
+      latestPosition = position;
+      if (!initialPingSent) {
+        initialPingSent = true;
+        sendLocation();
+      }
+    },
+    () => {
+      showError(true, 'Location permission denied. Allow location access, then start the trip again.');
+      stopTrip();
+    },
     { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
   );
 
@@ -117,7 +131,7 @@ function stopTrip() {
   gpsPill.textContent = 'GPS off';
   gpsPill.classList.remove('on');
   onlineDot.style.background = 'var(--muted-dim)';
-  onlineDot.style.animation = 'none';
+  onlineDot.classList.remove('is-live');
 
   if (watchId !== null) navigator.geolocation.clearWatch(watchId);
   clearInterval(sendTimer);

@@ -3,49 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bus Tracker: Student</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+<meta name="theme-color" content="#0b1015">
+<title>Student tracker | Campus Transit</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../css/student.css">
+<link rel="stylesheet" href="../css/clay.css">
 </head>
 <body class="student-body">
-
 <header class="app-bar">
-  <span class="brand"><span class="dot"></span>Campus Bus Tracker</span>
-  <span class="meta" id="last-updated">Connecting…</span>
+  <div class="app-bar-start">
+    <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="M4 18V6h6l4 6h6v6h-6l-4-6H4"/><path d="M7 18h.01M17 18h.01"/></svg></span><span>Campus Transit</span></a>
+    <span class="app-role">STUDENT VIEW</span>
+  </div>
+  <div class="app-bar-end">
+    <span class="meta" id="last-updated">Connecting…</span>
+    <a class="signout" href="login.html" data-signout>Sign out</a>
+  </div>
 </header>
 
-<div class="layout">
-  <div id="map"></div>
-  <aside>
-    <div class="error-banner" id="error-banner">Unable to reach the server. Retrying…</div>
-
-    <select id="bus-select">
-      <option value="">Loading buses…</option>
-    </select>
-
-    <div class="eta-hero">
-      <div class="label">Estimated arrival</div>
+<main class="student-layout">
+  <section class="map-panel" aria-label="Live bus map">
+    <div id="map"></div>
+    <div class="map-label"><span class="live-indicator">LIVE MAP</span><span class="map-zoom-note">Select a bus to view its route</span></div>
+  </section>
+  <aside class="student-panel">
+    <div class="student-panel-heading">
+      <div><p class="eyebrow">Your journey</p><h1>Route progress</h1></div>
+    </div>
+    <div class="error-banner" id="error-banner" role="alert">Unable to reach the server. Retrying…</div>
+    <div class="field bus-field">
+      <label for="bus-select">Choose a bus</label>
+      <select id="bus-select" class="control"><option value="">Loading buses…</option></select>
+    </div>
+    <section class="eta-hero" aria-live="polite">
+      <div class="eta-topline"><span class="eyebrow">Estimated arrival</span><span class="eta-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg></span></div>
       <div class="value" id="eta-value">--</div>
-      <div class="sub" id="eta-stop-name">Waiting for data</div>
+      <div class="sub" id="eta-stop-name">Waiting for bus data</div>
+    </section>
+    <div class="distance-grid">
+      <div class="distance-card"><span class="label">To next stop</span><span class="value" id="distance-value">-- km</span></div>
+      <div class="distance-card"><span class="label">Bus to you</span><span class="value" id="student-distance-value">-- km</span></div>
     </div>
-
-    <div class="stat-line">
-      <span class="label">Distance remaining</span>
-      <span class="value" id="distance-value">-- km</span>
-    </div>
-
-    <div class="stat-line">
-      <span class="label">Distance to you</span>
-      <span class="value" id="student-distance-value">-- km</span>
-    </div>
-
-    <h2>Route stops</h2>
-    <ul class="stop-list" id="stop-list">
-      <li><span class="marker"></span><span class="name">Loading stops…</span></li>
-    </ul>
+    <section class="stops-section">
+      <div class="section-title"><h2>Stops on this route</h2><span class="mono">IN ORDER</span></div>
+      <ul class="stop-list" id="stop-list">
+        <li class="stop-placeholder"><span class="marker"></span><span class="name">Waiting for route data</span></li>
+      </ul>
+    </section>
+    <p class="location-note"><span class="location-note-mark" aria-hidden="true"></span>Your location is used to calculate distance to the bus.</p>
   </aside>
-</div>
+</main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="../js/api.js"></script>

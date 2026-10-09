@@ -3,43 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign in: Campus Transit</title>
+<meta name="theme-color" content="#0b1015">
+<title>Choose a role | Campus Transit</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../css/login.css">
+<link rel="stylesheet" href="../css/clay.css">
 </head>
 <body class="login-body">
-
-<div class="panel auth-card">
-  <div class="brand"><span class="dot"></span>Campus Transit</div>
-
-  <h1 id="form-title">Continue as Student</h1>
-  <p class="sub" id="form-sub">Track your bus in real time.</p>
-
-  <div class="role-tabs">
-    <button class="active" data-role="student">Student</button>
-    <button data-role="driver">Driver</button>
-    <button data-role="admin">Admin</button>
-  </div>
-
-  <div class="error-banner" id="error-banner">Please enter a name to continue.</div>
-
-  <form id="login-form">
-    <div class="field">
-      <label for="name">Name</label>
-      <input type="text" id="name" placeholder="e.g. Akash Sharma" autocomplete="name">
+<main class="auth-layout">
+  <section class="auth-story">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="M4 18V6h6l4 6h6v6h-6l-4-6H4"/><path d="M7 18h.01M17 18h.01"/></svg></span>
+      <span>Campus Transit</span>
+    </a>
+    <div class="auth-story-copy">
+      <p class="eyebrow">Your route, in view</p>
+      <h1>One place for every part of the trip.</h1>
+      <p>Students follow bus progress. Drivers share location while a trip is active. Admins keep routes and stops up to date.</p>
     </div>
-    <div class="field" id="bus-field" style="display:none;">
-      <label for="assigned-bus">Assigned bus</label>
-      <select id="assigned-bus">
-        <option value="bus-1">Bus 01</option>
-      </select>
+    <div class="auth-rail" aria-hidden="true">
+      <span class="auth-rail-line"></span>
+      <span class="auth-rail-stop"></span>
+      <span class="auth-rail-stop"></span>
+      <span class="auth-rail-stop"></span>
+      <span class="auth-rail-bus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M3 11h18m-13 7v2m8-2v2"/></svg></span>
     </div>
-    <button type="submit" class="btn btn-primary btn-lg">Continue</button>
-  </form>
+    <p class="auth-story-foot mono">STUDENT · DRIVER · ADMIN</p>
+  </section>
 
-  <div class="fine-print">Demo login. No password required yet; swap this for real authentication before going live.</div>
-</div>
+  <section class="panel auth-card" aria-labelledby="form-title">
+    <div class="auth-card-head">
+      <div>
+        <p class="eyebrow">Demo access</p>
+        <h2 id="form-title">Continue as Student</h2>
+        <p class="sub" id="form-sub">Track your bus in real time.</p>
+      </div>
+      <span class="auth-step mono">ROLE ACCESS</span>
+    </div>
 
+    <div class="role-tabs" role="group" aria-label="Choose a role">
+      <button class="active" type="button" data-role="student" aria-pressed="true">Student</button>
+      <button type="button" data-role="driver" aria-pressed="false">Driver</button>
+      <button type="button" data-role="admin" aria-pressed="false">Admin</button>
+    </div>
+
+    <div class="error-banner" id="error-banner" role="alert">Please enter a name to continue.</div>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="name">Your name</label>
+        <input type="text" id="name" placeholder="Enter your name" autocomplete="name" required>
+      </div>
+      <div class="field" id="bus-field" hidden>
+        <label for="assigned-bus">Assigned bus</label>
+        <select id="assigned-bus"><option value="">Loading buses…</option></select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Continue <span aria-hidden="true">→</span></button>
+    </form>
+
+    <div class="auth-card-foot"><span class="auth-foot-rule"></span><p>Demo sign-in. Accounts and passwords are not enabled yet.</p></div>
+  </section>
+</main>
 <script src="../js/api.js"></script>
 <script src="../js/auth.js"></script>
 </body>

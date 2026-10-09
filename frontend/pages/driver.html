@@ -3,72 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bus Tracker: Driver</title>
+<meta name="theme-color" content="#0b1015">
+<title>Driver controls | Campus Transit</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../css/driver.css">
+<link rel="stylesheet" href="../css/clay.css">
 </head>
 <body class="driver-body">
-
-<header class="app-bar" style="width:100%; max-width:440px;">
-  <span class="brand"><span class="dot" id="online-dot" style="background:var(--muted-dim); animation:none;"></span>Driver</span>
-  <span class="meta" id="driver-name">--</span>
+<header class="app-bar">
+  <div class="app-bar-start">
+    <a class="brand" href="../index.html"><span class="brand-mark" id="online-dot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="M4 18V6h6l4 6h6v6h-6l-4-6H4"/><path d="M7 18h.01M17 18h.01"/></svg></span><span>Campus Transit</span></a>
+    <span class="app-role">DRIVER CONTROLS</span>
+  </div>
+  <div class="app-bar-end"><span class="meta" id="driver-name">Driver</span><a class="signout" href="login.html" data-signout>Sign out</a></div>
 </header>
 
 <main class="driver-main">
-  <div class="error-banner" id="error-banner">Could not reach the server.</div>
+  <div class="driver-heading"><div><p class="eyebrow">Trip control</p><h1>Driver console</h1><p>Start a trip to share your live location with students.</p></div><div class="status-tag" id="status-pill">Offline</div></div>
+  <div class="error-banner" id="error-banner" role="alert">Could not reach the server.</div>
 
-  <div class="status-row">
-    <span class="bus-name" id="bus-label">Bus --</span>
-    <span class="pill" id="status-pill">Offline</span>
-  </div>
-
-  <div class="panel trip-control">
-    <div class="ring" id="trip-ring">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="5" width="18" height="12" rx="2"></rect>
-        <path d="M3 11h18"></path>
-        <circle cx="7.5" cy="19" r="1.5"></circle>
-        <circle cx="16.5" cy="19" r="1.5"></circle>
-      </svg>
+  <section class="trip-control panel">
+    <div class="trip-overline"><span class="eyebrow">Assigned vehicle</span><span class="bus-name mono" id="bus-label">Bus --</span></div>
+    <div class="trip-center">
+      <div class="ring" id="trip-ring" aria-hidden="true">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"><rect x="3" y="5" width="18" height="12" rx="2"></rect><path d="M3 11h18M7 17v2m10-2v2"></path><circle cx="7.5" cy="19" r="1.5"></circle><circle cx="16.5" cy="19" r="1.5"></circle></svg>
+      </div>
+      <div class="state-label" id="state-label">Trip not started</div>
+      <p class="trip-helper">Location sharing runs only while the trip is active.</p>
+      <button class="trip-btn start" id="trip-btn">Start trip</button>
     </div>
-    <div class="state-label" id="state-label">Trip not started</div>
-    <button class="trip-btn start" id="trip-btn">Start Trip</button>
-  </div>
+  </section>
 
-  <div class="panel gps-readout">
-    <div>
+  <section class="driver-details">
+    <div class="gps-readout panel">
+      <div class="detail-heading"><div><p class="eyebrow">Location feed</p><h2>GPS status</h2></div><span class="status-tag" id="gps-pill">GPS off</span></div>
       <div class="coords" id="gps-coords">--, --</div>
-      <div class="caption">Last GPS reading sent</div>
+      <div class="caption">Last position sent to the server</div>
     </div>
-    <span class="pill" id="gps-pill">GPS off</span>
-  </div>
+    <div class="trip-stats panel">
+      <p class="eyebrow">Current trip</p>
+      <div class="stat-row"><span>Updates sent</span><span class="value" id="stat-updates">0</span></div>
+      <div class="stat-row"><span>Trip duration</span><span class="value" id="stat-duration">00:00</span></div>
+    </div>
+  </section>
 
-  <div class="stats-grid">
-    <div class="panel stat-box">
-      <div class="label">Updates sent</div>
-      <div class="value" id="stat-updates">0</div>
-    </div>
-    <div class="panel stat-box">
-      <div class="label">Trip duration</div>
-      <div class="value" id="stat-duration">00:00</div>
-    </div>
-  </div>
-
-  <div class="panel direction-row">
-    <div class="current-route">
-      <span class="label">Current direction</span>
-      <span class="name" id="route-name">--</span>
-    </div>
+  <section class="direction-row panel">
+    <div class="current-route"><span class="eyebrow">Route direction</span><span class="name" id="route-name">--</span></div>
     <button class="btn btn-outline" id="switch-direction-btn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="17 1 21 5 17 9"></polyline>
-        <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
-        <polyline points="7 23 3 19 7 15"></polyline>
-        <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
-      </svg>
-      Switch
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 7h15l-3-3m4 13H5l3 3"/><path d="M19 7v3M5 17v-3"/></svg>
+      Switch direction
     </button>
-  </div>
+  </section>
 </main>
 
 <script src="../js/api.js"></script>

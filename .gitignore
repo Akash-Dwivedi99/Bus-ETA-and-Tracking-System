@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+*.log
+*.joblib
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+.tmp/
+.codex_packages/
+node_modules/
+dist/

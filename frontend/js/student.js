@@ -37,11 +37,18 @@ function renderStops(stops) {
   const listEl = document.getElementById('stop-list');
   listEl.innerHTML = '';
 
+  if (!stops.length) {
+    const empty = document.createElement('li');
+    empty.className = 'stop-placeholder';
+    empty.innerHTML = '<span class="marker"></span><span class="name">No stops have been added to this route</span>';
+    listEl.appendChild(empty);
+  }
+
   stops.forEach(stop => {
     const marker = L.circleMarker([stop.lat, stop.lng], {
       radius: 6,
-      color: stop.reached ? '#4ade80' : '#334155',
-      fillColor: stop.reached ? '#4ade80' : '#1e293b',
+      color: stop.reached ? '#79c9b0' : '#405057',
+      fillColor: stop.reached ? '#79c9b0' : '#111a21',
       fillOpacity: 1,
       weight: 2,
     }).addTo(map).bindPopup(stop.name);
@@ -52,7 +59,18 @@ function renderStops(stops) {
     if (stop.reached) cls = 'reached';
     else if (stop.next) cls = 'next';
     li.className = cls;
-    li.innerHTML = `<span class="marker"></span><span class="name">${stop.name}</span><span class="time">${stop.eta_min != null ? stop.eta_min + ' min' : ''}</span>`;
+    const markerEl = document.createElement('span');
+    markerEl.className = 'marker';
+    const nameEl = document.createElement('span');
+    nameEl.className = 'name';
+    nameEl.textContent = stop.name;
+    li.append(markerEl, nameEl);
+    if (stop.eta_min != null) {
+      const timeEl = document.createElement('span');
+      timeEl.className = 'time';
+      timeEl.textContent = `${stop.eta_min} min`;
+      li.appendChild(timeEl);
+    }
     listEl.appendChild(li);
   });
 
@@ -93,8 +111,10 @@ function updateSidebar(data) {
   document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
 }
 
-function showError(show) {
-  document.getElementById('error-banner').style.display = show ? 'block' : 'none';
+function showError(show, message) {
+  const banner = document.getElementById('error-banner');
+  banner.style.display = show ? 'block' : 'none';
+  if (message) banner.textContent = message;
 }
 
 async function fetchBusData() {
@@ -109,7 +129,7 @@ async function fetchBusData() {
     updateSidebar(data);
     showError(false);
   } catch (err) {
-    showError(true);
+    showError(true, err.message || 'Could not load bus location. Retrying.');
     document.getElementById('last-updated').textContent = 'Connection lost';
   }
 }
@@ -131,7 +151,7 @@ async function loadBuses() {
     });
   } catch (err) {
     select.innerHTML = '<option value="">Could not load buses</option>';
-    showError(true);
+    showError(true, err.message || 'Could not load buses. Check the server and database.');
   }
 }
 

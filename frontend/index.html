@@ -3,49 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Campus Transit</title>
+<meta name="theme-color" content="#0b1015">
+<meta name="description" content="Live campus bus locations, route stops, and arrival estimates.">
+<title>Campus Transit | Bus tracking</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="stylesheet" href="css/style.css">
-<style>
-  body {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at 30% 20%, rgba(255,176,32,0.08), transparent 55%), var(--ink);
-  }
-  .hero {
-    text-align: left;
-    max-width: 420px;
-    padding: 32px;
-  }
-  .hero .kicker {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--signal);
-    margin-bottom: 14px;
-  }
-  .hero h1 {
-    font-size: 34px;
-    font-weight: 700;
-    line-height: 1.15;
-    margin-bottom: 14px;
-  }
-  .hero p {
-    color: var(--muted);
-    font-size: 15px;
-    line-height: 1.5;
-    margin-bottom: 30px;
-  }
-</style>
+<link rel="stylesheet" href="css/landing.css">
+<link rel="stylesheet" href="css/clay.css">
 </head>
-<body>
+<body class="landing-body">
+<header class="landing-header">
+  <a class="brand" href="./" aria-label="Campus Transit home">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="M4 18V6h6l4 6h6v6h-6l-4-6H4"/><path d="M7 18h.01M17 18h.01"/></svg>
+    </span>
+    <span>Campus Transit</span>
+  </a>
+  <div class="landing-header-note"><span class="status-tag">LIVE BUS TRACKING</span></div>
+</header>
 
-<div class="hero">
-  <div class="kicker mono">campus transit · live tracking</div>
-  <h1>Know exactly when<br>your bus arrives.</h1>
-  <p>Live GPS tracking for college and school buses. See the bus move in real time, get an ETA, and know how far it is from you.</p>
-  <a href="pages/login.html" class="btn btn-primary btn-lg">Get started</a>
-</div>
+<main class="landing-main">
+  <section class="landing-copy">
+    <p class="eyebrow">Campus bus tracking</p>
+    <h1>Know where your campus bus is.</h1>
+    <p class="landing-description">Follow its live position, check the next stop, and see an estimated arrival time from your phone.</p>
+    <div class="landing-actions">
+      <a href="pages/login.html" class="btn btn-primary btn-lg">Open bus tracker <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12 12 4M5 4h7v7"/></svg></a>
+      <span class="landing-note">For students, drivers, and campus admins</span>
+    </div>
+    <div class="landing-details">
+      <div><span class="detail-rule"></span><p><strong>Students</strong><br>View location and stop estimates</p></div>
+      <div><span class="detail-rule"></span><p><strong>Drivers</strong><br>Share GPS while a trip is active</p></div>
+      <div><span class="detail-rule"></span><p><strong>Admins</strong><br>Manage routes, buses, and stops</p></div>
+    </div>
+  </section>
 
+  <section class="route-art" aria-label="Illustration of a bus route">
+    <div class="route-art-head"><span class="eyebrow">A connected route</span><span class="route-art-code mono">ILLUSTRATIVE ROUTE</span></div>
+    <div class="route-stage">
+      <svg class="route-drawing" viewBox="0 0 600 420" role="img" aria-label="A route line linking three stops">
+        <path class="route-track-back" d="M94 345 C130 301 144 269 206 255 S290 227 315 171 S407 118 470 134 S507 192 519 228"/>
+        <path class="route-track" d="M94 345 C130 301 144 269 206 255 S290 227 315 171 S407 118 470 134 S507 192 519 228"/>
+        <g class="route-stop stop-one" transform="translate(94 345)"><circle r="9"/><circle r="3"/></g>
+        <g class="route-stop stop-two" transform="translate(315 171)"><circle r="9"/><circle r="3"/></g>
+        <g class="route-stop stop-three" transform="translate(519 228)"><circle r="9"/><circle r="3"/></g>
+        <g class="route-bus" transform="translate(308 177)">
+          <rect x="-19" y="-13" width="38" height="26" rx="3"/>
+          <path d="M-13 -7h26v9h-26zM-12 16h5m14 0h5"/>
+          <animateMotion id="hero-bus-motion" begin="indefinite" dur="14s" repeatCount="indefinite" rotate="auto" path="M94 345 C130 301 144 269 206 255 S290 227 315 171 S407 118 470 134 S507 192 519 228"/>
+        </g>
+        <text x="60" y="382">STOP 01</text>
+        <text x="250" y="139">ROUTE LINK</text>
+        <text x="464" y="272">STOP 03</text>
+        <path class="map-grid" d="M50 66h500M50 116h500M50 166h500M50 216h500M50 266h500M50 316h500M100 50v320M150 50v320M200 50v320M250 50v320M300 50v320M350 50v320M400 50v320M450 50v320M500 50v320"/>
+      </svg>
+    </div>
+    <div class="route-art-foot"><span>Illustrative route diagram. Live routes come from your campus database.</span><span class="route-art-mark" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 12 12 4M5 4h7v7"/></svg></span></div>
+  </section>
+</main>
+<section class="landing-info" aria-label="Campus Transit features">
+  <article><p class="eyebrow">CAMPUS ROUTES</p><h2>Track a route in progress</h2><p>See a bus position, its stops, and an estimated arrival time. Drivers share browser location during a trip.</p></article>
+  <article><p class="eyebrow">TRIP UPDATES</p><h2>Location while a trip is active</h2><p>Drivers can start a trip from the driver page. The student view refreshes bus position and route progress while the service is connected.</p></article>
+</section>
+<footer class="landing-footer"><span>Campus Transit</span><span>Route information updates as trips progress</span><span><a href="pages/privacy.html">Privacy</a> · <a href="pages/terms.html">Terms</a></span></footer>
+<script src="js/landing.js"></script>
 </body>
 </html>

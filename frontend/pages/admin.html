@@ -3,86 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bus Tracker: Admin</title>
+<meta name="theme-color" content="#0b1015">
+<title>Administration | Campus Transit</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../css/admin.css">
+<link rel="stylesheet" href="../css/clay.css">
 </head>
 <body class="admin-body">
-
 <header class="app-bar">
-  <span class="brand"><span class="dot"></span>Admin Panel</span>
-  <span class="meta" id="admin-name">--</span>
+  <div class="app-bar-start">
+    <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square" stroke-linejoin="miter"><path d="M4 18V6h6l4 6h6v6h-6l-4-6H4"/><path d="M7 18h.01M17 18h.01"/></svg></span><span>Campus Transit</span></a>
+    <span class="app-role">ADMINISTRATION</span>
+  </div>
+  <div class="app-bar-end"><span class="meta" id="admin-name">Admin</span><a class="signout" href="login.html" data-signout>Sign out</a></div>
 </header>
 
-<div class="admin-layout">
-  <nav class="admin-nav">
-    <button class="active" data-section="routes-section">Routes</button>
-    <button data-section="buses-section">Buses</button>
-    <button data-section="stops-section">Stops</button>
+<main class="admin-layout">
+  <nav class="admin-nav" aria-label="Administration sections">
+    <p class="eyebrow nav-heading">Manage</p>
+    <button class="active" type="button" data-section="routes-section" aria-controls="routes-section" aria-current="page"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 16V4h5l4 6h5v6h-5l-4-6H3"/><circle cx="3" cy="4" r="1" fill="currentColor"/><circle cx="17" cy="16" r="1" fill="currentColor"/></svg></span><span>Routes</span></button>
+    <button type="button" data-section="buses-section" aria-controls="buses-section"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="14" height="11" rx="1.5"/><path d="M3 7h14m-11 7v3m8-3v3"/><circle cx="6" cy="12" r=".7" fill="currentColor"/><circle cx="14" cy="12" r=".7" fill="currentColor"/></svg></span><span>Buses</span></button>
+    <button type="button" data-section="stops-section" aria-controls="stops-section"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 17s5-4.5 5-9a5 5 0 1 0-10 0c0 4.5 5 9 5 9Z"/><circle cx="10" cy="8" r="1.7"/></svg></span><span>Stops</span></button>
+    <div class="nav-note"><span class="nav-note-rule"></span><p>Changes here update the route and bus lists used throughout the tracker.</p></div>
   </nav>
 
   <div class="admin-content">
-    <div class="error-banner" id="error-banner">Something went wrong.</div>
-
-    <!-- Routes -->
-    <section class="admin-section active" id="routes-section">
-      <div class="section-header"><h1>Routes</h1></div>
-      <table>
-        <thead><tr><th>ID</th><th>Name</th><th>Paired (return) route</th></tr></thead>
-        <tbody id="routes-table"></tbody>
-      </table>
+    <div class="error-banner" id="error-banner" role="alert">Something went wrong.</div>
+    <section class="admin-section active" id="routes-section" aria-labelledby="routes-heading">
+      <header class="section-header"><div><p class="eyebrow">Network setup</p><h1 id="routes-heading">Routes</h1><p>Define the paths buses follow through campus and nearby stops.</p></div></header>
+      <div class="table-shell"><table class="data-table"><thead><tr><th>ID</th><th>Route name</th><th>Return route</th></tr></thead><tbody id="routes-table"></tbody></table></div>
       <div class="panel add-form">
-        <h3>Add a new route</h3>
-        <div class="field"><label for="new-route-name">Route name</label><input type="text" id="new-route-name" placeholder="e.g. Hostel Route"></div>
-        <button class="btn btn-primary" id="add-route-btn">Add route</button>
+        <div class="form-heading"><div><p class="eyebrow">Route details</p><h2>Add a route</h2></div><span class="form-mark" aria-hidden="true">+</span></div>
+        <div class="field"><label for="new-route-name">Route name</label><input type="text" id="new-route-name" placeholder="For example, Hostel Route"></div>
+        <button class="btn btn-primary" id="add-route-btn" type="button">Add route</button>
       </div>
     </section>
 
-    <!-- Buses -->
-    <section class="admin-section" id="buses-section">
-      <div class="section-header"><h1>Buses</h1></div>
-      <table>
-        <thead><tr><th>Bus ID</th><th>Bus number</th><th>Route</th></tr></thead>
-        <tbody id="buses-table"></tbody>
-      </table>
+    <section class="admin-section" id="buses-section" aria-labelledby="buses-heading">
+      <header class="section-header"><div><p class="eyebrow">Fleet setup</p><h1 id="buses-heading">Buses</h1><p>Register each vehicle and assign it to a route.</p></div></header>
+      <div class="table-shell"><table class="data-table"><thead><tr><th>Bus ID</th><th>Bus number</th><th>Assigned route</th></tr></thead><tbody id="buses-table"></tbody></table></div>
       <div class="panel add-form">
-        <h3>Register a new bus</h3>
+        <div class="form-heading"><div><p class="eyebrow">Vehicle details</p><h2>Register a bus</h2></div><span class="form-mark" aria-hidden="true">+</span></div>
         <div class="form-row">
           <div class="field"><label for="new-bus-id">Bus ID</label><input type="text" id="new-bus-id" placeholder="bus-3"></div>
-          <div class="field"><label for="new-bus-number">Bus number</label><input type="text" id="new-bus-number" placeholder="Bus 03"></div>
+          <div class="field"><label for="new-bus-number">Display name</label><input type="text" id="new-bus-number" placeholder="Bus 03"></div>
         </div>
-        <div class="field">
-          <label for="new-bus-route">Route</label>
-          <select id="new-bus-route"></select>
-        </div>
-        <button class="btn btn-primary" id="add-bus-btn">Register bus</button>
+        <div class="field"><label for="new-bus-route">Assigned route</label><select id="new-bus-route"></select></div>
+        <button class="btn btn-primary" id="add-bus-btn" type="button">Register bus</button>
       </div>
     </section>
 
-    <!-- Stops -->
-    <section class="admin-section" id="stops-section">
-      <div class="section-header"><h1>Stops</h1></div>
-      <div class="field" style="max-width:320px;">
-        <label for="stops-route-filter">Viewing stops for route</label>
-        <select id="stops-route-filter"></select>
-      </div>
-      <table>
-        <thead><tr><th>Order</th><th>Name</th><th>Lat</th><th>Lng</th></tr></thead>
-        <tbody id="stops-table"></tbody>
-      </table>
+    <section class="admin-section" id="stops-section" aria-labelledby="stops-heading">
+      <header class="section-header"><div><p class="eyebrow">Route setup</p><h1 id="stops-heading">Stops</h1><p>Add stops in travel order with their map coordinates.</p></div></header>
+      <div class="field route-filter"><label for="stops-route-filter">Route</label><select id="stops-route-filter"></select></div>
+      <div class="table-shell"><table class="data-table"><thead><tr><th>Order</th><th>Stop name</th><th>Latitude</th><th>Longitude</th></tr></thead><tbody id="stops-table"></tbody></table></div>
       <div class="panel add-form">
-        <h3>Add a stop to this route</h3>
-        <div class="field"><label for="new-stop-name">Stop name</label><input type="text" id="new-stop-name" placeholder="e.g. Market Square"></div>
-        <div class="form-row">
-          <div class="field"><label for="new-stop-lat">Latitude</label><input type="text" id="new-stop-lat" placeholder="30.3256"></div>
-          <div class="field"><label for="new-stop-lng">Longitude</label><input type="text" id="new-stop-lng" placeholder="78.0437"></div>
-          <div class="field"><label for="new-stop-order">Order</label><input type="text" id="new-stop-order" placeholder="1"></div>
+        <div class="form-heading"><div><p class="eyebrow">Stop details</p><h2>Add a stop</h2></div><span class="form-mark" aria-hidden="true">+</span></div>
+        <div class="field"><label for="new-stop-name">Stop name</label><input type="text" id="new-stop-name" placeholder="For example, Market Square"></div>
+        <div class="form-row coordinate-row">
+          <div class="field"><label for="new-stop-lat">Latitude</label><input type="number" step="any" id="new-stop-lat" placeholder="30.3256"></div>
+          <div class="field"><label for="new-stop-lng">Longitude</label><input type="number" step="any" id="new-stop-lng" placeholder="78.0437"></div>
+          <div class="field"><label for="new-stop-order">Order</label><input type="number" min="1" step="1" id="new-stop-order" placeholder="1"></div>
         </div>
-        <button class="btn btn-primary" id="add-stop-btn">Add stop</button>
+        <button class="btn btn-primary" id="add-stop-btn" type="button">Add stop</button>
       </div>
     </section>
   </div>
-</div>
+</main>
 
 <script src="../js/api.js"></script>
 <script src="../js/admin.js"></script>

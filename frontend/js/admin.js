@@ -11,12 +11,41 @@ function showError(show, message) {
   if (message) errorBanner.textContent = message;
 }
 
+function renderTable(bodyId, rows, columnCount, emptyText) {
+  const body = document.getElementById(bodyId);
+  body.replaceChildren();
+  if (!rows.length) {
+    const row = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = columnCount;
+    cell.className = 'empty-state';
+    cell.textContent = emptyText;
+    row.appendChild(cell);
+    body.appendChild(row);
+    return;
+  }
+  rows.forEach(values => {
+    const row = document.createElement('tr');
+    values.forEach(({ text, mono = false }) => {
+      const cell = document.createElement('td');
+      if (mono) cell.className = 'mono-cell';
+      cell.textContent = text ?? '--';
+      row.appendChild(cell);
+    });
+    body.appendChild(row);
+  });
+}
+
 // ---- Nav switching ----
 document.querySelectorAll('.admin-nav button').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.admin-nav button').forEach(b => {
+      b.classList.remove('active');
+      b.removeAttribute('aria-current');
+    });
     document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
     btn.classList.add('active');
+    btn.setAttribute('aria-current', 'page');
     document.getElementById(btn.dataset.section).classList.add('active');
   });
 });
@@ -25,22 +54,22 @@ document.querySelectorAll('.admin-nav button').forEach(btn => {
 async function loadRoutes() {
   try {
     const routes = await apiGet('/routes');
+    renderTable('routes-table', routes.map(r => [
+      { text: r.id, mono: true },
+      { text: r.name },
+      { text: r.paired_route_id, mono: true },
+    ]), 3, 'No routes yet. Add a route below.');
 
-    document.getElementById('routes-table').innerHTML = routes.map(r => `
-      <tr>
-        <td class="mono-cell">${r.id}</td>
-        <td>${r.name}</td>
-        <td class="mono-cell">${r.paired_route_id ?? '--'}</td>
-      </tr>
-    `).join('');
-
-    const routeOptions = routes.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
-    document.getElementById('new-bus-route').innerHTML = routeOptions;
-    document.getElementById('stops-route-filter').innerHTML = routeOptions;
+    ['new-bus-route', 'stops-route-filter'].forEach(id => {
+      const select = document.getElementById(id);
+      select.replaceChildren();
+      if (!routes.length) select.appendChild(new Option('Add a route first', ''));
+      routes.forEach(route => select.appendChild(new Option(route.name, route.id)));
+    });
 
     return routes;
-  } catch {
-    showError(true, 'Could not load routes.');
+  } catch (err) {
+    showError(true, err.message || 'Could not load routes.');
     return [];
   }
 }
@@ -54,8 +83,8 @@ document.getElementById('add-route-btn').addEventListener('click', async () => {
     document.getElementById('new-route-name').value = '';
     showError(false);
     await loadRoutes();
-  } catch {
-    showError(true, 'Could not add route.');
+  } catch (err) {
+    showError(true, err.message || 'Could not add route.');
   }
 });
 
@@ -63,15 +92,13 @@ document.getElementById('add-route-btn').addEventListener('click', async () => {
 async function loadBuses() {
   try {
     const buses = await apiGet('/buses');
-    document.getElementById('buses-table').innerHTML = buses.map(b => `
-      <tr>
-        <td class="mono-cell">${b.id}</td>
-        <td>${b.bus_number}</td>
-        <td>${b.route_name}</td>
-      </tr>
-    `).join('');
-  } catch {
-    showError(true, 'Could not load buses.');
+    renderTable('buses-table', buses.map(b => [
+      { text: b.id, mono: true },
+      { text: b.bus_number },
+      { text: b.route_name },
+    ]), 3, 'No buses are registered yet.');
+  } catch (err) {
+    showError(true, err.message || 'Could not load buses.');
   }
 }
 
@@ -87,8 +114,8 @@ document.getElementById('add-bus-btn').addEventListener('click', async () => {
     document.getElementById('new-bus-number').value = '';
     showError(false);
     await loadBuses();
-  } catch {
-    showError(true, 'Could not register bus. Check the Bus ID is unique.');
+  } catch (err) {
+    showError(true, err.message || 'Could not register bus. Check the Bus ID is unique.');
   }
 });
 
@@ -97,16 +124,14 @@ async function loadStops(routeId) {
   if (!routeId) return;
   try {
     const stops = await apiGet(`/routes/${routeId}/stops`);
-    document.getElementById('stops-table').innerHTML = stops.map(s => `
-      <tr>
-        <td class="mono-cell">${s.stop_order}</td>
-        <td>${s.name}</td>
-        <td class="mono-cell">${s.lat}</td>
-        <td class="mono-cell">${s.lng}</td>
-      </tr>
-    `).join('');
-  } catch {
-    showError(true, 'Could not load stops.');
+    renderTable('stops-table', stops.map(s => [
+      { text: s.stop_order, mono: true },
+      { text: s.name },
+      { text: s.lat, mono: true },
+      { text: s.lng, mono: true },
+    ]), 4, 'No stops are assigned to this route yet.');
+  } catch (err) {
+    showError(true, err.message || 'Could not load stops.');
   }
 }
 
@@ -134,8 +159,8 @@ document.getElementById('add-stop-btn').addEventListener('click', async () => {
     document.getElementById('new-stop-order').value = '';
     showError(false);
     await loadStops(route_id);
-  } catch {
-    showError(true, 'Could not add stop.');
+  } catch (err) {
+    showError(true, err.message || 'Could not add stop.');
   }
 });
 
@@ -144,4 +169,5 @@ document.getElementById('add-stop-btn').addEventListener('click', async () => {
   const routes = await loadRoutes();
   await loadBuses();
   if (routes.length > 0) loadStops(routes[0].id);
+  else renderTable('stops-table', [], 4, 'Add a route before adding stops.');
 })();

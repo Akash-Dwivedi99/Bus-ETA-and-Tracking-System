@@ -1,96 +1,87 @@
-# Smart Bus Tracker
+# Campus Transit
 
-Live GPS tracking for college and school buses. Students see the bus move on a map in real time with an ETA; drivers share their live location from a browser; admins manage routes, buses, and stops.
+A Flask and MySQL campus bus tracker. Students can view buses, route stops, and estimated arrivals. Drivers can share GPS while a trip is active and switch route direction. Admin pages manage buses, routes, and stops.
 
-## Architecture
+The sign-in page is a demo role selector. It does not create accounts or authenticate users. Keep this project on localhost or a controlled development network until real authentication and authorization are implemented.
 
-```
-Smart-Bus-Tracker/
-├── backend/
-│   ├── app.py                # Entry point — registers all blueprints
-│   ├── config.py              # DB credentials and app constants
-│   ├── database/
-│   │   ├── db.py              # Raw SQL — connection pool + queries
-│   │   └── schema.sql         # Full schema + sample data
-│   ├── routes/                # Flask blueprints (HTTP layer only)
-│   │   ├── auth.py            # Demo login
-│   │   ├── student.py         # GET /api/bus-location
-│   │   ├── driver.py          # POST update-location, toggle-direction
-│   │   ├── buses.py           # Bus list/register
-│   │   ├── routes.py          # Route/stop CRUD + Dijkstra demo endpoint
-│   │   └── tracking.py        # Fleet-wide position query (scaffolded)
-│   ├── algorithms/            # Pure logic, no Flask/DB imports
-│   │   ├── graph.py           # RouteGraph built from real stop data
-│   │   ├── dijkstra.py        # Standalone shortest-path algorithm
-│   │   └── eta.py             # Haversine distance + reached/next logic
-│   ├── services/               # Business logic between routes/ and database/
-│   │   ├── location_service.py
-│   │   ├── trip_service.py
-│   │   └── eta_service.py
-│   ├── ml/                    # Future-stage ETA prediction (synopsis §5.8-5.9)
-│   │   ├── train.py
-│   │   └── predict.py
-│   └── data/
-│       └── trips.csv          # Sample trip history for ML training
-└── frontend/
-    ├── index.html              # Landing page
-    ├── pages/                  # login, student, driver, admin
-    ├── css/
-    └── js/
+## Requirements
+
+- Python 3.11 or later
+- MySQL 8
+- A browser with JavaScript enabled
+
+## Step 1: Initialize MySQL
+
+In MySQL Workbench, run `backend/database/schema.sql` once. It creates the `bus_tracker` database, tables, and an illustrative sample route and bus. Replace the sample with authorized campus data before using it with riders. Do not rerun the seed script on an existing database because it inserts the sample records again.
+
+Create the local app account in Workbench. Choose a local password, then use that same value in `.env`:
+
+```sql
+CREATE USER 'bus_tracker_app'@'localhost' IDENTIFIED BY 'CHOOSE_A_LOCAL_PASSWORD';
+GRANT SELECT, INSERT, UPDATE, DELETE ON bus_tracker.* TO 'bus_tracker_app'@'localhost';
+FLUSH PRIVILEGES;
 ```
 
-Each layer only talks to the one below it: `routes/` calls `services/`, `services/` calls `database/` and `algorithms/`. Nothing in `algorithms/` or `database/` imports Flask.
+## Step 2: Configure the app
 
-## Setup
+Run these commands from the project root in PowerShell:
 
-1. **Database**
-   ```bash
-   mysql -u root -p < backend/database/schema.sql
-   ```
-   This creates the database, tables, sample stops, and a return-direction route.
-
-2. **Backend config**
-   Edit `backend/config.py` and replace `"your_password"` with your actual MySQL password.
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Run the backend**
-   ```bash
-   cd backend
-   python app.py
-   ```
-   Should print `Running on http://127.0.0.1:5000`.
-
-5. **Run the frontend**
-   Open `frontend/index.html` with VS Code's Live Server extension (or any static file server — opening it directly as a `file://` URL will break geolocation and API requests).
-
-## API reference
-
-| Method | Path | Purpose |
-|---|---|---|
-| POST | `/api/auth/login` | Demo login (no real auth yet) |
-| GET | `/api/bus-location?bus_id=` | Current position, stops, ETA for a bus |
-| POST | `/api/update-location` | Driver pushes a GPS point |
-| POST | `/api/buses/<id>/toggle-direction` | Flip a bus to its route's return direction |
-| GET / POST | `/api/buses` | List / register buses |
-| GET / POST | `/api/routes` | List / create routes |
-| GET | `/api/routes/<id>/stops` | Stops for a route |
-| POST | `/api/stops` | Add a stop to a route |
-| GET | `/api/routes/<id>/shortest-path?from=&to=` | Dijkstra demo between two stops |
-| GET | `/api/tracking/all` | Current position of every bus (not yet used by the frontend) |
-
-## ML-based ETA (future stage)
-
-`backend/data/trips.csv` holds sample trip history. Train a baseline model with:
-```bash
-cd backend
-python ml/train.py
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+notepad .env
 ```
-This saves `backend/ml/eta_model.joblib`. Once trained, wire `ml/predict.py`'s `predict_travel_time_min()` into `services/eta_service.py` in place of the plain distance/speed formula. Needs real logged trips (not the synthetic sample rows) to be meaningfully accurate.
 
-## Design/launch rules for this project
+Set `BUS_DB_PASSWORD` in `.env` to the password you chose for `bus_tracker_app`. Keep `.env` private and do not commit it.
 
-No purple gradients, no pill-shaped buttons, no fake reviews/metrics/customer counters, no vague hero text, no emoji icons, no em dashes in UI copy, no over-the-top scroll animation, no AI-slop photos/copy, no cursor animation. Before launch: custom domain, favicon, remove any "made with AI" tag, and add privacy policy + terms and conditions pages.
+## Step 3: Run Flask
+
+```powershell
+python -m backend.app
+```
+
+Keep that terminal open and visit `http://127.0.0.1:5000`. This is the recommended local URL. VS Code Live Server also works when it opens the site on `localhost` or `127.0.0.1` port 5500 or 5501; the frontend then calls Flask on port 5000. Cross-origin access is limited to those local origins in development. If Live Server chooses another port, use the Flask URL directly.
+
+Select **Student**, enter a display name, and continue. Choose a bus on the student page. The demo login does not check a password. The driver page requires browser location permission while a trip is active. Browser geolocation requires localhost or HTTPS.
+
+## Troubleshooting
+
+In a second PowerShell window, while Flask is running, check MySQL readiness and bus records:
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:5000/readyz"
+Invoke-RestMethod -Uri "http://127.0.0.1:5000/api/buses"
+```
+
+`/readyz` should return `status: ready`. `/api/buses` should return a JSON list. If either returns 503, check that MySQL is running and that the host, port, user, password, and database in `.env` match MySQL. Restart Flask after changing `.env`.
+
+## API overview
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/auth/login` | Validate demo name and role |
+| GET | `/api/buses` | List buses and route names |
+| GET | `/api/routes` | List routes |
+| GET | `/api/bus-location?bus_id=...` | Get latest location, route stops, and ETA |
+| POST | `/api/bus-location` | Store a driver location update |
+| POST | `/api/buses/<id>/toggle-direction` | Switch a bus to its paired route |
+| GET | `/healthz` | Check Flask process status |
+| GET | `/readyz` | Check MySQL connection |
+
+## Tests and checks
+
+```powershell
+python -m unittest discover -s tests -v
+node --check frontend/js/api.js
+node --check frontend/js/auth.js
+node --check frontend/js/student.js
+node --check frontend/js/driver.js
+```
+
+The unit tests mock database access. A successful live check still requires a running MySQL server with the schema loaded.
+
+## Privacy and launch readiness
+
+The driver page sends GPS coordinates to MySQL during an active trip. The student page uses browser geolocation locally to calculate distance from the bus. Define retention, access, consent, and operator contact details before real-world use. The privacy and terms pages are drafts and need review for the actual institution and jurisdiction. A custom domain, HTTPS, real user authentication, authorization, backups, and security review are not configured by this local project.

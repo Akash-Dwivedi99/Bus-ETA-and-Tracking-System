@@ -20,15 +20,15 @@ const busIcon = L.divIcon({
   className: 'bus-marker-wrap',
   html: `<div style="
            width:34px; height:34px;
-           background:#38bdf8;
-           border:3px solid #0b1220;
+           background:#e6ae58;
+           border:3px solid #0b1015;
            border-radius:50%;
            display:flex; align-items:center; justify-content:center;
            box-shadow:0 2px 8px rgba(0,0,0,0.5);
            position:relative;
            z-index:2;
          ">
-           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0b1220" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1b160e" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
              <rect x="3" y="5" width="18" height="12" rx="2"></rect>
              <path d="M3 11h18"></path>
              <circle cx="7.5" cy="19" r="1.5"></circle>
@@ -41,7 +41,7 @@ const busIcon = L.divIcon({
 
 const studentIcon = L.divIcon({
   className: '',
-  html: '<div style="background:#4fd1c5;width:14px;height:14px;border-radius:50%;border:3px solid #0f172a;box-shadow:0 0 0 2px #4fd1c5;"></div>',
+  html: '<div style="background:#79c9b0;width:14px;height:14px;border-radius:50%;border:3px solid #0b1015;box-shadow:0 0 0 2px #79c9b0;"></div>',
   iconSize: [14, 14],
   iconAnchor: [7, 7],
 });

@@ -1,0 +1,10 @@
+.legal-page { background: var(--ink); }
+.legal-header, .legal-footer { width: min(960px, calc(100% - 40px)); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.legal-header { min-height: 70px; border-bottom: 1px solid var(--line-soft); }
+.legal-header > a:last-child, .legal-footer a { color: var(--muted); font-size: 12px; }
+.legal-content { width: min(760px, calc(100% - 40px)); margin: 0 auto; padding: 56px 0 70px; }
+.legal-content h1 { margin: 10px 0 8px; font-size: clamp(34px, 5vw, 50px); letter-spacing: -.04em; }
+.legal-updated { padding: 12px; border-left: 3px solid var(--signal); background: var(--panel); color: var(--muted); font-size: 12px; line-height: 1.6; }
+.legal-content h2 { margin: 32px 0 9px; font-size: 19px; }
+.legal-content p:not(.eyebrow):not(.legal-updated) { color: var(--muted); font-size: 14px; line-height: 1.8; }
+.legal-footer { padding: 18px 0 28px; border-top: 1px solid var(--line-soft); color: var(--muted-dim); font-size: 11px; }

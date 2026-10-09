@@ -8,10 +8,15 @@ place and testable on its own.
 from mysql.connector import pooling
 from backend.config import DB_CONFIG
 
-pool = pooling.MySQLConnectionPool(pool_name="bus_pool", pool_size=5, **DB_CONFIG)
+pool = None
 
 
 def get_conn():
+    # Build the pool on first use so Flask can start and serve the UI even
+    # when MySQL is stopped or has not been configured yet.
+    global pool
+    if pool is None:
+        pool = pooling.MySQLConnectionPool(pool_name="bus_pool", pool_size=5, **DB_CONFIG)
     return pool.get_connection()
 
 
